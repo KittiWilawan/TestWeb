@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+
+<html lang="th">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DON'T LOOK BACK : อย่าหันหลัง</title>
+
+    <!-- Google Font -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+
+    <!-- CSS -->
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!-- เอฟเฟกต์หมอก -->
+
+    <div class="fog-layer fog1"></div>
+
+    <div class="fog-layer fog2"></div>
+
+
+
+    <!-- ปุ่มเปิด/ปิดเสียง -->
+
+    <button id="soundToggle" class="sound-btn">
+
+        🔊 เสียง
+
+    </button>
+
+
+
+    <!-- ================= INTRO ================= -->
+
+
+
+    <section id="introScreen" class="screen active">
+
+
+
+        <div class="intro-box">
+
+
+
+            <h1 class="game-title">
+
+                DON'T LOOK BACK
+
+            </h1>
+
+
+
+            <h2 class="thai-title">
+
+                อย่าหันหลัง
+
+            </h2>
+
+
+
+            <div id="introTypewriter" class="typewriter"></div>
+
+
+
+            <div class="intro-buttons">
+
+
+
+                <button id="startBtn" class="main-btn">
+
+                    ▶ เริ่มเกม
+
+                </button>
+
+
+
+                <button id="guideBtn" class="secondary-btn">
+
+                    📖 วิธีเล่น
+
+                </button>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+    <!-- ================= GUIDE ================= -->
+
+
+
+    <section id="guideScreen" class="screen">
+
+
+
+        <div class="card">
+
+
+
+            <h2>วิธีเล่น</h2>
+
+
+
+            <p>
+
+                คุณจะได้รับบทเป็นนักศึกษาที่กำลังเผชิญเหตุการณ์ลึกลับ
+
+                ทุกการตัดสินใจจะส่งผลต่อเส้นทางเรื่องราวและตอนจบ
+
+            </p>
+
+
+
+            <ul>
+
+                <li>เลือกคำตอบที่คุณคิดว่าจะทำจริง</li>
+
+                <li>แต่ละคำตอบส่งผลต่อคะแนน</li>
+
+                <li>มีตอนจบทั้งหมด 4 รูปแบบ</li>
+
+                <li>ใช้เวลาเล่นประมาณ 3-5 นาที</li>
+
+            </ul>
+
+
+
+            <button id="backIntroBtn" class="main-btn">
+
+                กลับหน้าหลัก
+
+            </button>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+    <!-- ================= PLAYER INFO ================= -->
+
+
+
+    <section id="playerScreen" class="screen">
+
+
+
+        <div class="card">
+
+
+
+            <h2>ข้อมูลผู้เข้าร่วม</h2>
+
+
+
+            <form id="playerForm">
+
+
+
+                <label>อายุ</label>
+
+                <input type="number" id="age" required>
+
+
+
+                <label>เพศ</label>
+
+                <select id="gender" required>
+
+                    <option value="">-- เลือก --</option>
+
+                    <option>ชาย</option>
+
+                    <option>หญิง</option>
+
+                    <option>LGBTQ+</option>
+
+                    <option>ไม่ระบุ</option>
+
+                </select>
+
+
+
+                <label>คุณฟังเรื่องผีบ่อยหรือไม่</label>
+
+                <select id="horrorFrequency">
+
+                    <option>บ่อยมาก</option>
+
+                    <option>บางครั้ง</option>
+
+                    <option>นาน ๆ ครั้ง</option>
+
+                    <option>แทบไม่เคย</option>
+
+                </select>
+
+
+
+                <button type="submit" class="main-btn">
+
+                    เริ่มเนื้อเรื่อง
+
+                </button>
+
+
+
+            </form>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+    <!-- ================= GAME ================= -->
+
+
+
+    <section id="gameScreen" class="screen">
+
+
+
+        <div class="game-container">
+
+
+
+            <div class="progress-container">
+
+                <div id="progressBar"></div>
+
+            </div>
+
+
+
+            <div class="scene-image">
+
+
+
+                <img id="sceneImage" src="assets/images/scene1.jpg" alt="scene">
+
+
+
+            </div>
+
+
+
+            <div id="chapterLabel" class="chapter-label">
+
+                บทที่ 1
+
+            </div>
+
+
+
+            <div id="storyText" class="story-box"></div>
+
+
+
+            <div id="choiceContainer" class="choice-container"></div>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+    <!-- ================= FEEDBACK ================= -->
+
+
+
+    <section id="feedbackScreen" class="screen">
+
+
+
+        <div class="card">
+
+
+
+            <h2>ผลของการตัดสินใจ</h2>
+
+
+
+            <div id="feedbackText"></div>
+
+
+
+            <button id="continueBtn" class="main-btn">
+
+                ดำเนินเรื่องต่อ
+
+            </button>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+    <!-- ================= ENDING ================= -->
+
+
+
+    <section id="endingScreen" class="screen">
+
+
+
+        <div class="card">
+
+
+
+            <h2>ผลลัพธ์ของคุณ</h2>
+
+
+
+            <div id="endingResult"></div>
+
+
+
+            <div class="score-box">
+
+
+
+                <p>
+
+                    Survival :
+
+                    <span id="survivalScore">0</span>
+
+                </p>
+
+
+
+                <p>
+
+                    Curiosity :
+
+                    <span id="curiosityScore">0</span>
+
+                </p>
+
+
+
+                <p>
+
+                    Courage :
+
+                    <span id="courageScore">0</span>
+
+                </p>
+
+
+
+            </div>
+
+
+
+            <button id="goSurveyBtn" class="main-btn">
+
+                ทำแบบประเมิน
+
+            </button>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+    <!-- ================= SURVEY ================= -->
+
+
+
+    <section id="surveyScreen" class="screen">
+
+
+
+        <div class="card">
+
+
+
+            <h2>แบบประเมิน</h2>
+
+
+
+            <form id="surveyForm">
+
+
+
+                <label>1. เนื้อเรื่องน่าสนใจ</label>
+
+                <select required>
+
+                    <option>5</option>
+
+                    <option>4</option>
+
+                    <option>3</option>
+
+                    <option>2</option>
+
+                    <option>1</option>
+
+                </select>
+
+
+
+                <label>2. ภาพประกอบเหมาะสม</label>
+
+                <select required>
+
+                    <option>5</option>
+
+                    <option>4</option>
+
+                    <option>3</option>
+
+                    <option>2</option>
+
+                    <option>1</option>
+
+                </select>
+
+
+
+                <label>3. เสียงช่วยสร้างบรรยากาศ</label>
+
+                <select required>
+
+                    <option>5</option>
+
+                    <option>4</option>
+
+                    <option>3</option>
+
+                    <option>2</option>
+
+                    <option>1</option>
+
+                </select>
+
+
+
+                <label>ข้อเสนอแนะเพิ่มเติม</label>
+
+                <textarea rows="5"></textarea>
+
+
+
+                <button type="submit" class="main-btn">
+
+                    ส่งแบบประเมิน
+
+                </button>
+
+
+
+            </form>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+    <!-- ================= CERTIFICATE ================= -->
+
+
+
+    <section id="certificateScreen" class="screen">
+
+
+
+        <div id="certificate" class="certificate">
+
+
+
+            <h2>DON'T LOOK BACK</h2>
+
+
+
+            <h3>RESULT CERTIFICATE</h3>
+
+
+
+            <div id="certificateEnding"></div>
+
+
+
+            <p>
+
+                Play Time :
+
+                <span id="playTime"></span>
+
+            </p>
+
+
+
+        </div>
+
+
+
+        <div class="certificate-buttons">
+
+
+
+            <button id="downloadBtn" class="main-btn">
+
+                ดาวน์โหลดผลลัพธ์
+
+            </button>
+
+
+
+            <button id="restartBtn" class="secondary-btn">
+
+                เล่นอีกครั้ง
+
+            </button>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+    <!-- ================= AUDIO ================= -->
+
+
+
+    <audio id="windAudio" loop>
+
+        <source src="assets/audio/wind.mp3" type="audio/mpeg">
+
+    </audio>
+
+
+
+    <audio id="heartbeatAudio">
+
+        <source src="assets/audio/heartbeat.mp3" type="audio/mpeg">
+
+    </audio>
+
+
+
+    <audio id="whisperAudio">
+
+        <source src="assets/audio/whisper.mp3" type="audio/mpeg">
+
+    </audio>
+
+
+
+    <audio id="clickAudio">
+
+        <source src="assets/audio/click.mp3" type="audio/mpeg">
+
+    </audio>
+
+
+
+    <!-- html2canvas -->
+
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+
+
+    <!-- JavaScript -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
