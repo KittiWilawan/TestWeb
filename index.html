@@ -1,625 +1,122 @@
 <!DOCTYPE html>
-
 <html lang="th">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>DON'T LOOK BACK : อย่าหันหลัง</title>
-
-    <!-- Google Font -->
-
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-
-
-    <!-- CSS -->
-
+    <meta name="description" content="เกมสยองขวัญแนว Interactive Fiction สำหรับงานวิจัยด้านจิตวิทยา - DON'T LOOK BACK อย่าหันหลัง">
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
-
-    <!-- เอฟเฟกต์หมอก -->
-
-    <div class="fog-layer fog1"></div>
-
-    <div class="fog-layer fog2"></div>
-
-
-
-    <!-- ปุ่มเปิด/ปิดเสียง -->
-
-    <button id="soundToggle" class="sound-btn">
-
-        🔊 เสียง
-
-    </button>
-
-
-
-    <!-- ================= INTRO ================= -->
-
-
-
-    <section id="introScreen" class="screen active">
-
-
-
-        <div class="intro-box">
-
-
-
-            <h1 class="game-title">
-
-                DON'T LOOK BACK
-
-            </h1>
-
-
-
-            <h2 class="thai-title">
-
-                อย่าหันหลัง
-
-            </h2>
-
-
-
-            <div id="introTypewriter" class="typewriter"></div>
-
-
-
-            <div class="intro-buttons">
-
-
-
-                <button id="startBtn" class="main-btn">
-
-                    ▶ เริ่มเกม
-
-                </button>
-
-
-
-                <button id="guideBtn" class="secondary-btn">
-
-                    📖 วิธีเล่น
-
-                </button>
-
-
-
-            </div>
-
-
-
-        </div>
-
-
-
-    </section>
-
-
-
-    <!-- ================= GUIDE ================= -->
-
-
-
-    <section id="guideScreen" class="screen">
-
-
-
-        <div class="card">
-
-
-
-            <h2>วิธีเล่น</h2>
-
-
-
-            <p>
-
-                คุณจะได้รับบทเป็นนักศึกษาที่กำลังเผชิญเหตุการณ์ลึกลับ
-
-                ทุกการตัดสินใจจะส่งผลต่อเส้นทางเรื่องราวและตอนจบ
-
-            </p>
-
-
-
-            <ul>
-
-                <li>เลือกคำตอบที่คุณคิดว่าจะทำจริง</li>
-
-                <li>แต่ละคำตอบส่งผลต่อคะแนน</li>
-
-                <li>มีตอนจบทั้งหมด 4 รูปแบบ</li>
-
-                <li>ใช้เวลาเล่นประมาณ 3-5 นาที</li>
-
-            </ul>
-
-
-
-            <button id="backIntroBtn" class="main-btn">
-
-                กลับหน้าหลัก
-
+    <!-- ⚠️ หน้าจอคำเตือนก่อนเริ่มเกม (Consent Screen) -->
+    <div id="warning-screen" class="overlay">
+        <div class="warning-box">
+            <span class="warning-icon">⚠️</span>
+            <h2 class="warning-title">คำเตือน</h2>
+            <p>เกมนี้มีเนื้อหาที่อาจทำให้ตกใจ<br>รวมถึงเสียงเอฟเฟกต์และภาพกระพริบ</p>
+            <div class="warning-divider"></div>
+            <p>เกมนี้เป็นส่วนหนึ่งของงานวิจัย<br>ข้อมูลพฤติกรรมการเล่นของคุณจะถูกบันทึกเพื่อใช้ในการศึกษาวิจัยเท่านั้น</p>
+            <p class="warning-minor">หากคุณมีอาการโรคลมชัก หรือไวต่อแสงกระพริบ กรุณาหลีกเลี่ยงการเล่น</p>
+            <div class="warning-divider"></div>
+            <button id="btn-consent" class="btn-choice" style="width: 100%; text-align: center; padding: 14px; font-size: 1rem; font-weight: 600; letter-spacing: 0.5px;">
+                🎮 ยอมรับและเริ่มเล่นเกม
             </button>
-
-
-
         </div>
+    </div>
 
-
-
-    </section>
-
-
-
-    <!-- ================= PLAYER INFO ================= -->
-
-
-
-    <section id="playerScreen" class="screen">
-
-
-
-        <div class="card">
-
-
-
-            <h2>ข้อมูลผู้เข้าร่วม</h2>
-
-
-
-            <form id="playerForm">
-
-
-
-                <label>อายุ</label>
-
-                <input type="number" id="age" required>
-
-
-
-                <label>เพศ</label>
-
-                <select id="gender" required>
-
-                    <option value="">-- เลือก --</option>
-
-                    <option>ชาย</option>
-
-                    <option>หญิง</option>
-
-                    <option>LGBTQ+</option>
-
-                    <option>ไม่ระบุ</option>
-
-                </select>
-
-
-
-                <label>คุณฟังเรื่องผีบ่อยหรือไม่</label>
-
-                <select id="horrorFrequency">
-
-                    <option>บ่อยมาก</option>
-
-                    <option>บางครั้ง</option>
-
-                    <option>นาน ๆ ครั้ง</option>
-
-                    <option>แทบไม่เคย</option>
-
-                </select>
-
-
-
-                <button type="submit" class="main-btn">
-
-                    เริ่มเนื้อเรื่อง
-
-                </button>
-
-
-
-            </form>
-
-
-
-        </div>
-
-
-
-    </section>
-
-
-
-    <!-- ================= GAME ================= -->
-
-
-
-    <section id="gameScreen" class="screen">
-
-
-
+    <!-- 🎮 หน้าจอเกมหลัก -->
+    <div id="game-interface" class="hidden">
         <div class="game-container">
-
-
-
-            <div class="progress-container">
-
-                <div id="progressBar"></div>
-
+            <!-- 🖼️ ภาพประกอบฉาก -->
+            <div class="scene-image-wrapper" id="scene-image-wrapper">
+                <img id="scene-image" src="images/scene_entrance.png" alt="Scene illustration">
             </div>
 
-
-
-            <div class="scene-image">
-
-
-
-                <img id="sceneImage" src="assets/images/scene1.jpg" alt="scene">
-
-
-
+            <!-- HUD: แถบสถานะตัวละคร -->
+            <div id="research-hud" class="hud">
+                <div class="hud-stat stat-courage">
+                    <div class="stat-label">❤️ ความกล้าหาญ</div>
+                    <div class="stat-value" id="val-courage">50</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" id="bar-courage" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="hud-stat stat-fear">
+                    <div class="stat-label">😨 ความกลัว</div>
+                    <div class="stat-value" id="val-fear">0</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" id="bar-fear" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="hud-stat stat-items">
+                    <div class="stat-label">🎒 ไอเทม</div>
+                    <div class="stat-value" id="val-items">—</div>
+                </div>
             </div>
 
-
-
-            <div id="chapterLabel" class="chapter-label">
-
-                บทที่ 1
-
+            <!-- ส่วนเนื้อเรื่องหลัก -->
+            <div class="story-section">
+                <p id="scene-text">กำลังโหลดเนื้อเรื่อง...</p>
+                <div class="scene-divider"></div>
             </div>
 
-
-
-            <div id="storyText" class="story-box"></div>
-
-
-
-            <div id="choiceContainer" class="choice-container"></div>
-
-
-
-        </div>
-
-
-
-    </section>
-
-
-
-    <!-- ================= FEEDBACK ================= -->
-
-
-
-    <section id="feedbackScreen" class="screen">
-
-
-
-        <div class="card">
-
-
-
-            <h2>ผลของการตัดสินใจ</h2>
-
-
-
-            <div id="feedbackText"></div>
-
-
-
-            <button id="continueBtn" class="main-btn">
-
-                ดำเนินเรื่องต่อ
-
-            </button>
-
-
-
-        </div>
-
-
-
-    </section>
-
-
-
-    <!-- ================= ENDING ================= -->
-
-
-
-    <section id="endingScreen" class="screen">
-
-
-
-        <div class="card">
-
-
-
-            <h2>ผลลัพธ์ของคุณ</h2>
-
-
-
-            <div id="endingResult"></div>
-
-
-
-            <div class="score-box">
-
-
-
-                <p>
-
-                    Survival :
-
-                    <span id="survivalScore">0</span>
-
-                </p>
-
-
-
-                <p>
-
-                    Curiosity :
-
-                    <span id="curiosityScore">0</span>
-
-                </p>
-
-
-
-                <p>
-
-                    Courage :
-
-                    <span id="courageScore">0</span>
-
-                </p>
-
-
-
+            <!-- ส่วนปุ่มตัวเลือก -->
+            <div id="choice-container">
+                <!-- ปุ่มจะถูกสร้างแบบ Dynamic ด้วย JS -->
             </div>
 
+            <!-- 📝 แบบประเมินหลังเกมจบ -->
+            <div id="research-summary-container" class="hidden">
+                <h3>📝 แบบประเมินสภาวะอารมณ์หลังการเล่น</h3>
+                <form id="survey-form">
+                    <p>1. คุณรู้สึกตื่นเต้นหรือกลัวในระดับใดขณะเล่นเกมนี้?</p>
+                    <label><input type="radio" name="q1" value="1" required> 1 (น้อยมาก)</label>
+                    <label><input type="radio" name="q1" value="2"> 2 (น้อย)</label>
+                    <label><input type="radio" name="q1" value="3"> 3 (ปานกลาง)</label>
+                    <label><input type="radio" name="q1" value="4"> 4 (มาก)</label>
+                    <label><input type="radio" name="q1" value="5"> 5 (มากที่สุด)</label>
 
+                    <p>2. เอฟเฟกต์เสียงและตัวพิมพ์ดีดมีส่วนช่วยให้คุณจดจ่อกับเนื้อหาหรือไม่?</p>
+                    <label><input type="radio" name="q2" value="yes" required> มีส่วนอย่างมาก</label>
+                    <label><input type="radio" name="q2" value="no"> ไม่มีผลเลย</label>
 
-            <button id="goSurveyBtn" class="main-btn">
+                    <button type="submit" class="btn-submit">📊 ส่งแบบประเมินและดูผลสรุปพฤติกรรม</button>
+                </form>
 
-                ทำแบบประเมิน
+                <!-- 📊 Dashboard ผลสรุปพฤติกรรม -->
+                <div id="psych-dashboard" class="hidden">
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 20px 0;">
+                    <h3>📊 ผลสรุปวิเคราะห์พฤติกรรมของคุณ</h3>
 
-            </button>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-label">⏱️ เวลาเล่น</div>
+                            <div class="card-value"><span id="summary-time">0</span><small style="font-size:0.6em; color:#888;">s</small></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-label">❤️ ความกล้าหาญ</div>
+                            <div class="card-value"><span id="summary-courage">0</span><small style="font-size:0.6em;">%</small></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-label">😨 ความกลัว</div>
+                            <div class="card-value"><span id="summary-fear">0</span><small style="font-size:0.6em;">%</small></div>
+                        </div>
+                    </div>
 
+                    <div class="dashboard-style" id="summary-style">กำลังประมวลผล...</div>
 
-
+                    <div class="researcher-note">
+                        <p><b>💡 หมายเหตุสำหรับผู้วิจัย:</b> สามารถ Copy ข้อมูล JSON ด้านล่างนี้ไปใช้ในโปรแกรม SPSS / Excel ได้ทันที</p>
+                        <textarea id="raw-json-output" rows="6" readonly></textarea>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
-
-    </section>
-
-
-
-    <!-- ================= SURVEY ================= -->
-
-
-
-    <section id="surveyScreen" class="screen">
-
-
-
-        <div class="card">
-
-
-
-            <h2>แบบประเมิน</h2>
-
-
-
-            <form id="surveyForm">
-
-
-
-                <label>1. เนื้อเรื่องน่าสนใจ</label>
-
-                <select required>
-
-                    <option>5</option>
-
-                    <option>4</option>
-
-                    <option>3</option>
-
-                    <option>2</option>
-
-                    <option>1</option>
-
-                </select>
-
-
-
-                <label>2. ภาพประกอบเหมาะสม</label>
-
-                <select required>
-
-                    <option>5</option>
-
-                    <option>4</option>
-
-                    <option>3</option>
-
-                    <option>2</option>
-
-                    <option>1</option>
-
-                </select>
-
-
-
-                <label>3. เสียงช่วยสร้างบรรยากาศ</label>
-
-                <select required>
-
-                    <option>5</option>
-
-                    <option>4</option>
-
-                    <option>3</option>
-
-                    <option>2</option>
-
-                    <option>1</option>
-
-                </select>
-
-
-
-                <label>ข้อเสนอแนะเพิ่มเติม</label>
-
-                <textarea rows="5"></textarea>
-
-
-
-                <button type="submit" class="main-btn">
-
-                    ส่งแบบประเมิน
-
-                </button>
-
-
-
-            </form>
-
-
-
-        </div>
-
-
-
-    </section>
-
-
-
-    <!-- ================= CERTIFICATE ================= -->
-
-
-
-    <section id="certificateScreen" class="screen">
-
-
-
-        <div id="certificate" class="certificate">
-
-
-
-            <h2>DON'T LOOK BACK</h2>
-
-
-
-            <h3>RESULT CERTIFICATE</h3>
-
-
-
-            <div id="certificateEnding"></div>
-
-
-
-            <p>
-
-                Play Time :
-
-                <span id="playTime"></span>
-
-            </p>
-
-
-
-        </div>
-
-
-
-        <div class="certificate-buttons">
-
-
-
-            <button id="downloadBtn" class="main-btn">
-
-                ดาวน์โหลดผลลัพธ์
-
-            </button>
-
-
-
-            <button id="restartBtn" class="secondary-btn">
-
-                เล่นอีกครั้ง
-
-            </button>
-
-
-
-        </div>
-
-
-
-    </section>
-
-
-
-    <!-- ================= AUDIO ================= -->
-
-
-
-    <audio id="windAudio" loop>
-
-        <source src="assets/audio/wind.mp3" type="audio/mpeg">
-
-    </audio>
-
-
-
-    <audio id="heartbeatAudio">
-
-        <source src="assets/audio/heartbeat.mp3" type="audio/mpeg">
-
-    </audio>
-
-
-
-    <audio id="whisperAudio">
-
-        <source src="assets/audio/whisper.mp3" type="audio/mpeg">
-
-    </audio>
-
-
-
-    <audio id="clickAudio">
-
-        <source src="assets/audio/click.mp3" type="audio/mpeg">
-
-    </audio>
-
-
-
-    <!-- html2canvas -->
-
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-
-
-    <!-- JavaScript -->
+    </div>
 
     <script src="script.js"></script>
-
 </body>
 
 </html>

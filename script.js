@@ -1,627 +1,348 @@
-let currentChapter = 0;
-
-let survival = 0;
-let curiosity = 0;
-let courage = 0;
-
-let selectedEnding = "";
-
-let playStartTime = Date.now();
-
-let playerChoices = [];
-
-// ==========================
-// STORY
-// ==========================
-
-const chapters = [
-
-    {
-        title: "บทที่ 1 : เสียงเรียกยามเที่ยงคืน",
-
-        image: "assets/images/scene1.jpg",
-
-        story: `
-เวลา 00:37 น.
-
-คุณเพิ่งออกจากห้องโปรเจกต์ของมหาวิทยาลัย
-
-คืนนี้ทั้งอาคารเงียบผิดปกติ
-
-ระหว่างเดินกลับหอพัก
-
-จู่ ๆ คุณได้ยินเสียงเรียกชื่อจากด้านหลัง
-
-"(ชื่อคุณ)..."
-
-ไม่มีใครอยู่บริเวณนั้น
-
-แต่เสียงนั้นดังขึ้นอีกครั้ง...
-`,
-
-        choices: [
-
-            {
-                text: "หันกลับไปดู",
-
-                survival: -1,
-                curiosity: 3,
-                courage: 1,
-
-                feedback: `
-คุณหันกลับไปทันที
-
-ปลายถนนว่างเปล่า
-
-แต่ใต้เสาไฟดวงสุดท้าย
-
-มีเงาคนยืนอยู่...
-`
-            },
-
-            {
-                text: "เดินต่อโดยไม่สนใจ",
-
-                survival: 3,
-                curiosity: 0,
-                courage: 0,
-
-                feedback: `
-คุณเร่งฝีเท้า
-
-และพยายามไม่สนใจเสียงเรียก
-
-แม้จะรู้สึกว่ามีใครกำลังเดินตามอยู่
-`
-            },
-
-            {
-                text: "โทรหาเพื่อน",
-
-                survival: 1,
-                curiosity: 1,
-                courage: 1,
-
-                feedback: `
-คุณหยิบโทรศัพท์ขึ้นมา
-
-แต่หน้าจอกลับขึ้นข้อความ
-
-"อย่าหันหลัง"
-`
-            }
-
-        ]
-
-    },
-
-    {
-        title: "บทที่ 2 : ลิฟต์ชั้น 13",
-
-        image: "assets/images/scene2.jpg",
-
-        story: `
-เมื่อกลับถึงหอพัก
-
-คุณรีบขึ้นลิฟต์
-
-ทั้งที่อาคารนี้มีเพียง 12 ชั้น
-
-แต่จู่ ๆ ลิฟต์กลับหยุดที่ชั้น 13
-
-ประตูค่อย ๆ เปิดออก
-
-เบื้องหน้าคือทางเดินมืดสนิท
-
-และมีใครบางคนยืนอยู่ปลายทางเดิน...
-`,
-
-        choices: [
-
-            {
-                text: "เดินออกไปดู",
-
-                survival: -1,
-                curiosity: 3,
-                courage: 2,
-
-                feedback: `
-คุณก้าวออกจากลิฟต์
-
-เงาคนนั้นเริ่มเดินเข้าหาคุณ
-
-อย่างช้า ๆ
-`
-            },
-
-            {
-                text: "กดปิดประตูลิฟต์",
-
-                survival: 3,
-                curiosity: 0,
-                courage: 0,
-
-                feedback: `
-คุณพยายามกดปิดประตู
-
-แต่ปุ่มไม่ตอบสนอง
-`
-            },
-
-            {
-                text: "หยิบโทรศัพท์ขึ้นมาถ่ายรูป",
-
-                survival: 0,
-                curiosity: 2,
-                courage: 3,
-
-                feedback: `
-เมื่อมองภาพที่ถ่ายได้
-
-เงาคนนั้นกำลังยืนอยู่ด้านหลังคุณ
-`
-            }
-
-        ]
-
-    }
-
-];
-
-// ==========================
-// ELEMENTS
-// ==========================
-
-const introScreen = document.getElementById("introScreen");
-const guideScreen = document.getElementById("guideScreen");
-const playerScreen = document.getElementById("playerScreen");
-
-const gameScreen = document.getElementById("gameScreen");
-const feedbackScreen = document.getElementById("feedbackScreen");
-
-const endingScreen = document.getElementById("endingScreen");
-const surveyScreen = document.getElementById("surveyScreen");
-const certificateScreen = document.getElementById("certificateScreen");
-
-const storyText = document.getElementById("storyText");
-const choiceContainer = document.getElementById("choiceContainer");
-
-const chapterLabel = document.getElementById("chapterLabel");
-const sceneImage = document.getElementById("sceneImage");
-
-const feedbackText = document.getElementById("feedbackText");
-
-// ==========================
-// TYPEWRITER
-// ==========================
-
-function typeWriter(text, element, speed = 25) {
-
-    element.innerHTML = "";
-
-    let i = 0;
-
-    function typing() {
-
-        if (i < text.length) {
-
-            element.innerHTML += text.charAt(i);
-
-            i++;
-
-            setTimeout(typing, speed);
-
-        }
-
-    }
-
-    typing();
-
-}
-
-// ==========================
-// SCREEN
-// ==========================
-
-function showScreen(screen) {
-
-    document
-        .querySelectorAll(".screen")
-        .forEach(screen => {
-
-            screen.classList.remove("active");
-
-        });
-
-    screen.classList.add("active");
-
-}
-
-// ==========================
-// PROGRESS BAR
-// ==========================
-
-function updateProgress() {
-
-    const percent =
-        ((currentChapter) / chapters.length) * 100;
-
-    document.getElementById("progressBar")
-        .style.width = percent + "%";
-
-}
-
-// ==========================
-// INTRO
-// ==========================
-
-window.onload = () => {
-
-    typeWriter(
-        `เวลา 00:37 น.
-
-คุณกำลังเดินกลับหอพักเพียงลำพัง...
-
-และมีบางอย่างกำลังเฝ้ามองคุณอยู่`,
-        document.getElementById("introTypewriter"),
-        30
-    );
-
+let gameState = {
+    currentScene: "scene_1",
+    courage: 50,
+    fear: 0,
+    curiosity: 50,
+    observation: 50,
+    inventory: [],
+    journals: []
 };
 
-// ==========================
-// GUIDE
-// ==========================
+let researchLog = {
+    startTime: null,
+    endTime: null,
+    totalPlayTime: 0,
+    choiceHistory: []
+};
 
-document
-    .getElementById("guideBtn")
-    .addEventListener("click", () => {
+// ตัวแปรควบคุมเอฟเฟคพิมพ์ดีด
+let typewriterTimeout;
 
-        showScreen(guideScreen);
+// ==========================================
+// 🖼️ SCENE IMAGE MAP — แมพรูปภาพประกอบแต่ละฉาก
+// ==========================================
+const sceneImages = {
+    "scene_1": "images/scene_entrance.png",
+    "scene_2": "images/scene_lobby.png",
+    "scene_3": "images/scene_lobby.png",
+    "scene_4": "images/scene_phone.png",
+    "scene_5": "images/scene_elevator.png",
+    "ending_a": "images/scene_ending.png"
+};
 
-    });
+// ==========================================
+// 🔊 AUDIO MANAGER (ใช้ Web Audio API สังเคราะห์เสียง ไม่ต้องโหลดไฟล์ .mp3)
+// ==========================================
+function playSoundEffect(type) {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
 
-document
-    .getElementById("backIntroBtn")
-    .addEventListener("click", () => {
+        if (type === "click") {
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.05);
+        }
+        else if (type === "phone") {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        }
+        else if (type === "jumpscare") {
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(80, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.4);
+            gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        }
+    } catch (e) {
+        console.log("Audio Context ยังไม่ทำงานจนกว่าผู้เล่นจะมีปฏิสัมพันธ์กับหน้าจอ");
+    }
+}
 
-        showScreen(introScreen);
+// ==========================================
+// ⌨️ TYPEWRITER EFFECT (ลูกเล่นตัวพิมพ์ดีด)
+// ==========================================
+function typeWriter(text, i, fnCallback) {
+    const element = document.getElementById("scene-text");
 
-    });
+    // เคลียร์ค่า timeout เก่ากรณีผู้เล่นกดข้ามไว
+    if (i === 0) element.innerHTML = "";
 
-// ==========================
-// START GAME
-// ==========================
+    if (i < text.length) {
+        element.innerHTML += text.charAt(i);
+        // เปิดเสียงกิ๊กๆ ตามจังหวะตัวอักษรวิ่ง (สุ่มไม่ให้รำคาญเกินไป)
+        if (i % 3 === 0) playSoundEffect("click");
 
-document
-    .getElementById("startBtn")
-    .addEventListener("click", () => {
+        typewriterTimeout = setTimeout(function () {
+            typeWriter(text, i + 1, fnCallback);
+        }, 30); // ความเร็วของตัวอักษร (มิลลิวินาที)
+    } else if (typeof fnCallback == 'function') {
+        fnCallback(); // เมื่อพิมพ์เสร็จ ค่อยเรียกฟังก์ชันโชว์ปุ่ม
+    }
+}
 
-        showScreen(playerScreen);
+// ==========================================
+// 🖼️ SCENE IMAGE TRANSITION
+// ==========================================
+function updateSceneImage(sceneId) {
+    const wrapper = document.getElementById("scene-image-wrapper");
+    const img = document.getElementById("scene-image");
+    const newSrc = sceneImages[sceneId];
 
-    });
+    if (newSrc && img.src !== newSrc) {
+        // Fade out
+        wrapper.classList.add("scene-transitioning");
+        setTimeout(() => {
+            img.src = newSrc;
+            img.alt = "ฉาก: " + sceneId;
+            // Fade in after image loads
+            img.onload = () => {
+                wrapper.classList.remove("scene-transitioning");
+            };
+            // Fallback: remove class even if onload doesn't fire
+            setTimeout(() => {
+                wrapper.classList.remove("scene-transitioning");
+            }, 500);
+        }, 300);
+    }
+}
 
-// ==========================
-// PLAYER FORM
-// ==========================
+// ==========================================
+// 🕹️ SCENE MANAGER WITH EFFECTS
+// ==========================================
+const scenes = {
+    "scene_1": {
+        text: "ปี พ.ศ.2569 ณ อาคารศิลปกรรมหลังเก่าที่ปิดตายมา 20 ปี... คุณยืนอยู่หน้าประตูทางเข้า บรรยากาศเงียบสงัด ลุงภารโรงเดินมาส่งพลางพูดว่า 'ถ้าได้ยินเสียงเรียกชื่อ... อย่าหันหลัง' คุณจะทำอย่างไร?",
+        playSound: null,
+        triggerGlitch: false,
+        choices: [
+            { text: "🚪 เปิดประตูเดินเข้าไปทันที", nextScene: "scene_2", effects: { courage: +10, fear: +5 }, logTag: "enter_boldly" },
+            { text: "🔦 หยุดเช็กอุปกรณ์ (เปิดไฟฉายและกล้อง) ก่อนเข้า", nextScene: "scene_2", effects: { observation: +10 }, itemGiven: "flashlight", logTag: "enter_cautious" }
+        ]
+    },
+    "scene_2": {
+        text: "คุณเข้ามาในล็อบบี้ กลิ่นอับและฝุ่นตลบอบอวล ที่โต๊ะประชาสัมพันธ์เก่ามี 'สมุดลงชื่อ' วางอยู่ และข้างๆ มีบอร์ดประกาศเก่าๆ ที่กระดาษเริ่มเปื่อย",
+        playSound: null,
+        triggerGlitch: false,
+        choices: [
+            { text: "📖 เดินไปเปิดสมุดลงชื่อเพื่อดูรายชื่อคนล่าสุด", nextScene: "scene_3", effects: { curiosity: +10, fear: +10 }, journalGiven: "Journal 02", logTag: "check_register" },
+            { text: "📋 เดินไปตรวจดูบอร์ดประกาศเก่า", nextScene: "scene_3", effects: { observation: +10 }, journalGiven: "Journal 01", logTag: "check_board" }
+        ]
+    },
+    "scene_3": {
+        text: "เมื่อคุณเดินมาดูประกาศเก่า ลมเย็นยะเยือกสายหนึ่งพัดผ่านตัวคุณไป บนบอร์ดมีเศษกระดาษระบุประกาศอย่างเป็นทางการปี 2544: 'ปิดตายอาคารศิลปกรรมชั่วคราวเนื่องจากเหตุสุดวิสัย' และมีรอยขีดข่วนลึกด้วยของมีคมทับคำว่า 'เหตุสุดวิสัย' ราวกับคนทำต้องการซ่อนบางอย่าง",
+        playSound: null,
+        triggerGlitch: false,
+        choices: [
+            { text: "✋ พยายามใช้มือแกะและลอกเศษกระดาษเพื่อดูข้อความที่ซ่อนอยู่ข้างหลัง", nextScene: "scene_4", effects: { curiosity: +15, fear: +5 }, logTag: "scratch_board" },
+            { text: "📸 ถ่ายรูปประกาศเก็บไว้ด้วยกล้อง DSLR แล้วเดินมุ่งหน้าไปห้องประชาสัมพันธ์", nextScene: "scene_4", effects: { observation: +15 }, logTag: "take_photo" }
+        ]
+    },
+    "scene_4": {
+        text: "คุณเข้ามาในห้องประชาสัมพันธ์ที่บรรยากาศมืดสนิท บนโต๊ะมีสมุดบันทึกเหตุการณ์เปิดทิ้งไว้ หน้าล่าสุดเขียนไว้เมื่อ 20 ปีก่อน: 'ธีรภัทร หายตัวไปในลิฟต์... ห้ามใครกดขึ้นชั้น 13 เด็ดขาด' ทันใดนั้น โทรศัพท์บ้านรุ่นเก่าบนโต๊ะก็ส่งเสียงดังขึ้นสนั่นตึก! 'กริ๊งงงง!'",
+        playSound: "phone",
+        triggerGlitch: false,
+        choices: [
+            { text: "📞 รวบรวมความกล้าเดินไปรับสายโทรศัพท์เพื่อฟังเสียงปลายสาย", nextScene: "scene_5", effects: { courage: +20, fear: +20 }, logTag: "answer_phone" },
+            { text: "🗄️ ไม่รับสาย แต่รีบเปิดลิ้นชักโต๊ะทำงานเพื่อหาของที่เป็นประโยชน์ก่อนเสียงเงียบ", nextScene: "scene_5", effects: { observation: +10, curiosity: +10 }, itemGiven: "key", logTag: "search_drawer" }
+        ]
+    },
+    "scene_5": {
+        text: "คุณมาหยุดยืนอยู่หน้าลิฟต์เก่า เสียงโทรศัพท์ดับวูบลงไป ทว่าอยู่ๆ ไฟลิฟต์สว่างวาบขึ้นมา ประตูเหล็กเลื่อนเปิดออกเองอย่างช้าๆ ภายในว่างเปล่าและมืดมิด... ปล่อยกลิ่นเหม็นอับรุนแรงลอยออกมากระทบหน้าอย่างจัง!!",
+        playSound: "jumpscare",
+        triggerGlitch: true,
+        choices: [
+            { text: "🛗 ก้าวเท้าเข้าไปในลิฟต์ เพื่อลองกดปุ่มหาทางขึ้นไปชั้นบน", nextScene: "ending_a", effects: { courage: +15, fear: +10 }, logTag: "enter_elevator" },
+            { text: "🪜 ไม่ไว้ใจระบบลิฟต์ หันหลังไปใช้บันไดหนีไฟมืดๆ ข้างลิฟต์แทน", nextScene: "ending_a", effects: { observation: +10, fear: +5 }, logTag: "use_stairs" }
+        ]
+    },
+    "ending_a": {
+        text: "เกมจบลง (Ending A — รอดชีวิต): คุณตัดสินใจหนีออกจากตึกสำเร็จ อาคารหลังนี้กำลังจะถูกทุบทำลายไปพร้อมกับความลับของธีรภัทร...",
+        playSound: null,
+        triggerGlitch: false,
+        choices: []
+    }
+};
 
-document
-    .getElementById("playerForm")
-    .addEventListener("submit", (e) => {
+function renderScene(sceneId) {
+    clearTimeout(typewriterTimeout);
+    const scene = scenes[sceneId];
+    gameState.currentScene = sceneId;
 
-        e.preventDefault();
+    // 🖼️ 0. อัปเดตรูปภาพประกอบฉาก
+    updateSceneImage(sceneId);
 
-        showScreen(gameScreen);
+    // 📺 1. จัดการกิมมิคหน้าจอ Glitch/สั่น
+    const container = document.querySelector(".game-container");
+    if (scene.triggerGlitch) {
+        container.classList.add("glitch-effect");
+        setTimeout(() => container.classList.remove("glitch-effect"), 500);
+    }
 
-        loadChapter();
+    // 🔊 2. จัดการเอฟเฟคเสียงประจำฉาก
+    if (scene.playSound) {
+        playSoundEffect(scene.playSound);
+    }
 
-    });
-
-// ==========================
-// LOAD CHAPTER
-// ==========================
-
-function loadChapter() {
-
-    updateProgress();
-
-    const chapter =
-        chapters[currentChapter];
-
-    chapterLabel.innerText =
-        chapter.title;
-
-    sceneImage.src =
-        chapter.image;
-
-    typeWriter(
-        chapter.story,
-        storyText,
-        20
-    );
-
+    // ล้างปุ่มชอยส์ไว้ก่อน รอข้อความพิมพ์เสร็จค่อยแสดง
+    const choiceContainer = document.getElementById("choice-container");
     choiceContainer.innerHTML = "";
 
-    chapter.choices.forEach(choice => {
-
-        const btn =
-            document.createElement("button");
-
-        btn.className =
-            "choice-btn";
-
-        btn.innerText =
-            choice.text;
-
-        btn.onclick = () => {
-
-            choose(choice);
-
-        };
-
-        choiceContainer.appendChild(btn);
-
-    });
-
-}
-
-// ==========================
-// CHOOSE
-// ==========================
-
-function choose(choice) {
-
-    survival += choice.survival;
-    curiosity += choice.curiosity;
-    courage += choice.courage;
-
-    playerChoices.push(choice.text);
-
-    feedbackText.innerText =
-        choice.feedback;
-
-    showScreen(feedbackScreen);
-
-}
-
-// ==========================
-// CONTINUE
-// ==========================
-
-document
-    .getElementById("continueBtn")
-    .addEventListener("click", () => {
-
-        currentChapter++;
-
-        if (currentChapter >= chapters.length) {
-
-            showEnding();
-
+    // ⌨️ 3. เรียกใช้ลูกเล่นตัวพิมพ์ดีด เมื่อพิมพ์เสร็จค่อยให้วาดปุ่มตัวเลือก (Callback)
+    typeWriter(scene.text, 0, () => {
+        if (scene.choices.length === 0) {
+            handleGameEnd();
             return;
-
         }
 
-        showScreen(gameScreen);
-
-        loadChapter();
-
+        scene.choices.forEach(choice => {
+            const button = document.createElement("button");
+            button.innerText = choice.text;
+            button.className = "btn-choice";
+            button.onclick = () => {
+                playSoundEffect("click");
+                processChoice(choice);
+            };
+            choiceContainer.appendChild(button);
+        });
     });
 
-// ==========================
-// ENDING
-// ==========================
-
-function showEnding() {
-
-    showScreen(endingScreen);
-
-    const endingBox =
-        document.getElementById("endingResult");
-
-    if (
-
-        playerChoices.includes("หันกลับไปดู")
-        &&
-        playerChoices.includes("เดินออกไปดู")
-
-    ) {
-
-        selectedEnding =
-            "🔴 อย่าหันหลัง";
-
-        endingBox.innerHTML = `
-<h2>🔴 อย่าหันหลัง</h2>
-<p>
-เช้าวันต่อมา
-
-ไม่มีใครพบตัวคุณอีกเลย
-</p>
-`;
-
-    }
-    else if (
-
-        survival >= curiosity &&
-        survival >= courage
-
-    ) {
-
-        selectedEnding =
-            "🟢 ผู้รอดชีวิต";
-
-        endingBox.innerHTML = `
-<h2>🟢 ผู้รอดชีวิต</h2>
-<p>
-คุณรอดออกจากเหตุการณ์ทั้งหมด
-</p>
-`;
-
-    }
-    else if (
-
-        curiosity >= courage
-
-    ) {
-
-        selectedEnding =
-            "🟡 ผู้ค้นพบความจริง";
-
-        endingBox.innerHTML = `
-<h2>🟡 ผู้ค้นพบความจริง</h2>
-<p>
-คุณค้นพบความลับที่ซ่อนอยู่
-</p>
-`;
-
-    }
-    else {
-
-        selectedEnding =
-            "🟠 ผู้กล้าเผชิญหน้า";
-
-        endingBox.innerHTML = `
-<h2>🟠 ผู้กล้าเผชิญหน้า</h2>
-<p>
-คุณเลือกเผชิญหน้ากับทุกสิ่ง
-</p>
-`;
-
-    }
-
-    document.getElementById(
-        "survivalScore"
-    ).innerText = survival;
-
-    document.getElementById(
-        "curiosityScore"
-    ).innerText = curiosity;
-
-    document.getElementById(
-        "courageScore"
-    ).innerText = courage;
-
+    updateHUD();
 }
 
-// ==========================
-// SURVEY
-// ==========================
-
-document
-    .getElementById("goSurveyBtn")
-    .addEventListener("click", () => {
-
-        showScreen(surveyScreen);
-
+function processChoice(choice) {
+    researchLog.choiceHistory.push({
+        fromScene: gameState.currentScene,
+        choiceSelected: choice.logTag,
+        timestamp: Date.now() - researchLog.startTime
     });
 
-document
-    .getElementById("surveyForm")
-    .addEventListener("submit", (e) => {
+    if (choice.effects) {
+        if (choice.effects.courage) gameState.courage += choice.effects.courage;
+        if (choice.effects.fear) gameState.fear += choice.effects.fear;
+        if (choice.effects.curiosity) gameState.curiosity += choice.effects.curiosity;
+        if (choice.effects.observation) gameState.observation += choice.effects.observation;
 
+        gameState.fear = Math.max(0, Math.min(100, gameState.fear));
+        gameState.courage = Math.max(0, Math.min(100, gameState.courage));
+    }
+
+    if (choice.itemGiven && !gameState.inventory.includes(choice.itemGiven)) gameState.inventory.push(choice.itemGiven);
+    if (choice.journalGiven && !gameState.journals.includes(choice.journalGiven)) gameState.journals.push(choice.journalGiven);
+
+    renderScene(choice.nextScene);
+}
+
+function updateHUD() {
+    const courageEl = document.getElementById("val-courage");
+    const fearEl = document.getElementById("val-fear");
+    const itemsEl = document.getElementById("val-items");
+    const barCourage = document.getElementById("bar-courage");
+    const barFear = document.getElementById("bar-fear");
+
+    courageEl.innerText = gameState.courage;
+    fearEl.innerText = gameState.fear;
+    itemsEl.innerText = gameState.inventory.length > 0
+        ? gameState.inventory.join(", ")
+        : "—";
+
+    // Animate progress bars
+    barCourage.style.width = gameState.courage + "%";
+    barFear.style.width = gameState.fear + "%";
+}
+
+// ==========================================
+// ⚠️ INITIALIZATION WITH INITIAL WARNING
+// ==========================================
+window.onload = () => {
+    // ดักปุ่มกด Consent เพื่อปิดหน้าจอคำเตือนแล้วเข้าเกม
+    document.getElementById("btn-consent").onclick = () => {
+        document.getElementById("warning-screen").classList.add("hidden");
+        document.getElementById("game-interface").classList.remove("hidden");
+
+        // เริ่มจับเวลาการวิจัยจริงหลังจากกดยอมรับคำเตือน
+        researchLog.startTime = Date.now();
+        renderScene("scene_1");
+    };
+};
+
+function handleGameEnd() {
+    researchLog.endTime = Date.now();
+    researchLog.totalPlayTime = Math.floor((researchLog.endTime - researchLog.startTime) / 1000);
+
+    // 1. แสดงข้อความจบเกม
+    document.getElementById("choice-container").innerHTML =
+        '<div class="game-end-msg">🏁 บันทึกข้อมูลการวิจัยเสร็จสิ้น — ขอบคุณที่ร่วมการทดลอง</div>';
+
+    // 2. แสดงพื้นที่ทำแบบประเมินท้ายเกม
+    const summaryContainer = document.getElementById("research-summary-container");
+    summaryContainer.classList.remove("hidden");
+
+    // 3. ดักจับการส่งฟอร์มแบบประเมิน
+    const surveyForm = document.getElementById("survey-form");
+    surveyForm.onsubmit = (e) => {
         e.preventDefault();
 
-        generateCertificate();
+        // บันทึกคำตอบจากแบบประเมินลงใน log วิจัย
+        const formData = new FormData(surveyForm);
+        researchLog.surveyAnswers = {
+            emotionalLevel: formData.get("q1"),
+            immersionEffect: formData.get("q2")
+        };
 
-        showScreen(certificateScreen);
+        // ซ่อนฟอร์มหลังจากกดส่งแล้ว
+        surveyForm.classList.add("hidden");
 
-    });
-
-// ==========================
-// CERTIFICATE
-// ==========================
-
-function generateCertificate() {
-
-    document
-        .getElementById("certificateEnding")
-        .innerText =
-        selectedEnding;
-
-    const totalTime =
-        Math.floor(
-            (Date.now() - playStartTime)
-            / 1000
-        );
-
-    const mins =
-        Math.floor(totalTime / 60);
-
-    const secs =
-        totalTime % 60;
-
-    document
-        .getElementById("playTime")
-        .innerText =
-        `${mins}:${secs.toString().padStart(2, "0")}`;
-
+        // เรียกฟังก์ชันคำนวณและแสดงผลพฤติกรรมผู้เล่น
+        showPsychologicalDashboard();
+    };
 }
 
-// ==========================
-// DOWNLOAD PNG
-// ==========================
+// ==========================================
+// 📈 ฟังก์ชันคำนวณและแสดงผลสรุปพฤติกรรม (สำหรับผู้เล่นและผู้วิจัย)
+// ==========================================
+function showPsychologicalDashboard() {
+    // 1. คำนวณหา "สไตล์การเล่น"
+    let playerStyle = "";
 
-document
-    .getElementById("downloadBtn")
-    .addEventListener("click", () => {
+    if (gameState.currentScene === "ending_c") {
+        playerStyle = "🎲 ผู้เสี่ยงภัยที่ไร้ความระมัดระวัง (Impulsive Explorer) — คุณมีความอยากรู้อยากเห็นสูงมากจนยอมมองข้ามคำเตือนของลุงภารโรง ทำให้คุณหันหลังกลับไปและติดอยู่ในลูป";
+    } else if (gameState.currentScene === "ending_d") {
+        playerStyle = "😰 ผู้เล่นที่ถูกครอบงำด้วยความวิตกกังวล (High Anxiety Passive) — ค่าความกลัวที่สูงเกินไปในฉากกดดัน ทำให้คุณตัดสินใจล่าช้าหรือเลือกชอยส์ที่หลบหนีปัญหา";
+    } else if (gameState.courage > 65 && gameState.observation > 60) {
+        playerStyle = "🕵️ นักสืบผู้รอบคอบและกล้าหาญ (Rational Investigator) — คุณรักษาสมดุลระหว่างความกล้าและการสังเกตได้ดีมาก สามารถไขปริศนาและเอาชีวิตรอดออกมาพร้อมหลักฐาน";
+    } else {
+        playerStyle = "🏃 ผู้รอดชีวิตตามสัญชาตญาณ (Pure Survivor) — คุณเน้นทำตามกฎและความปลอดภัยเป็นหลัก ไม่สนการค้นหาความจริงลึกๆ มุ่งเป้าไปที่การเอาตัวรอดจากตัวตึกอย่างรวดเร็ว";
+    }
 
-        html2canvas(
-            document.getElementById("certificate")
-        )
-            .then(canvas => {
+    // 2. อัปเดตข้อมูลขึ้นหน้าจอ Dashboard
+    document.getElementById("summary-time").innerText = researchLog.totalPlayTime;
+    document.getElementById("summary-courage").innerText = gameState.courage;
+    document.getElementById("summary-fear").innerText = gameState.fear;
+    document.getElementById("summary-style").innerText = playerStyle;
 
-                const link =
-                    document.createElement("a");
+    // 3. แปลงข้อมูลทั้งหมดเป็น JSON
+    const finalResearchOutput = {
+        playerMetadata: {
+            timestamp: new Date().toISOString(),
+            finalEnding: gameState.currentScene
+        },
+        gameStats: gameState,
+        behaviorLogs: researchLog
+    };
 
-                link.download =
-                    "dont-look-back-result.png";
+    document.getElementById("raw-json-output").value = JSON.stringify(finalResearchOutput, null, 2);
 
-                link.href =
-                    canvas.toDataURL();
-
-                link.click();
-
-            });
-
-    });
-
-// ==========================
-// RESTART
-// ==========================
-
-document
-    .getElementById("restartBtn")
-    .addEventListener("click", () => {
-
-        location.reload();
-
-    });
-
-// ==========================
-// SOUND
-// ==========================
-
-let soundEnabled = true;
-
-document
-    .getElementById("soundToggle")
-    .addEventListener("click", () => {
-
-        const wind =
-            document.getElementById("windAudio");
-
-        soundEnabled = !soundEnabled;
-
-        if (soundEnabled) {
-
-            wind.play();
-
-        }
-        else {
-
-            wind.pause();
-
-        }
-
-    });
-
+    // 4. เปิดแสดงหน้าจอ Dashboard
+    document.getElementById("psych-dashboard").classList.remove("hidden");
+}
